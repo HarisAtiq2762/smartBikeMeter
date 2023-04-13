@@ -1,0 +1,23 @@
+name: smart_bike_meter
+description: A new Flutter project.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 1.0.0+1
+environment:
+  sdk: '>=2.19.0 <3.0.0'
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+  sensors_plus: ^2.0.2
+  neopop: ^1.0.2
+  intl: ^0.18.0
+  geolocator: ^9.0.2
+  syncfusion_flutter_gauges: ^21.1.39
+  permission_handler: ^10.2.0
+  google_maps_flutter: ^2.2.5
+flutter:
+  uses-material-design: true
