@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:smart_bike_meter/bloc/rider/rider_bloc.dart';
 import 'package:smart_bike_meter/pages/auth/login.dart';
 import '../configs/screen_size_config.dart';
 import '../widgets/dashboard_data_container.dart';
@@ -9,6 +10,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DashboardPage extends StatefulWidget {
   static const String routeName = 'dashboard-screen';
@@ -23,7 +27,7 @@ class _DashboardPageState extends State<DashboardPage> {
   double lat = 0.0;
   double long = 0.0;
   GoogleMapController? mapController;
-
+  // final user = FirebaseAuth.instance.currentUser;
   final LocationSettings locationSettings = const LocationSettings(
     accuracy: LocationAccuracy.high,
     distanceFilter: 100,
@@ -83,7 +87,7 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     Widget displayMap() => Container(
-          height: ScreenConfig.screenSizeHeight * 0.38,
+          height: ScreenConfig.screenSizeHeight * 0.4,
           width: ScreenConfig.screenSizeWidth,
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.vertical(
@@ -124,7 +128,7 @@ class _DashboardPageState extends State<DashboardPage> {
         );
 
     Widget displaySpeedometer() => SizedBox(
-          height: ScreenConfig.screenSizeHeight * 0.34,
+          height: ScreenConfig.screenSizeHeight * 0.32,
           child: SfRadialGauge(
             backgroundColor: Colors.black,
             animationDuration: 3000,
@@ -221,16 +225,27 @@ class _DashboardPageState extends State<DashboardPage> {
                               'Welcome,',
                               style: ScreenConfig.theme.textTheme.bodyMedium,
                             ),
-                            Text(
-                              'Noman',
-                              style: ScreenConfig.theme.textTheme.bodyLarge,
+                            BlocBuilder<RiderBloc, RiderState>(
+                              builder: (context, state) {
+                                if (state is UserLoggedIn) {
+                                  return Text(
+                                    state.rider.name,
+                                    style:
+                                        ScreenConfig.theme.textTheme.bodyLarge,
+                                  );
+                                }
+                                return const SizedBox();
+                              },
                             ),
                           ],
                         ),
                         IconButton(
-                          onPressed: () {
+                          onPressed: () async {
+                            await FirebaseAuth.instance.signOut();
                             Navigator.pushReplacementNamed(
-                                context, LoginScreen.routeName);
+                              context,
+                              LoginScreen.routeName,
+                            );
                           },
                           icon: Icon(
                             Icons.power_settings_new,
