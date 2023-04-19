@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "724634062196",
+    "project_id": "smart-bike-meter",
+    "storage_bucket": "smart-bike-meter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:724634062196:android:ca3e1662f4ccc4355c3021",
+        "android_client_info": {
+          "package_name": "com.example.smart_bike_meter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "724634062196-phqdk3tlqq5c3semfhroiehl4tsatoe8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAB3erKcmNkXA6hNN1P8eCyz5mMcOG2sUo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "724634062196-phqdk3tlqq5c3semfhroiehl4tsatoe8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

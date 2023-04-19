@@ -18,16 +18,27 @@ class DashboardDataContainer extends StatelessWidget {
         border: Border.all(color: Colors.blueGrey),
         borderRadius: BorderRadius.circular(10.0),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            title,
-            style: ScreenConfig.theme.textTheme.bodyMedium,
+          Icon(
+            Icons.local_gas_station_outlined,
+            color: ScreenConfig.theme.primaryColor,
           ),
-          Text(
-            text,
-            style: ScreenConfig.theme.textTheme.bodyMedium,
+          const SizedBox(width: 10),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Text(
+                title,
+                style: ScreenConfig.theme.textTheme.bodyMedium,
+              ),
+              Text(
+                text,
+                style: ScreenConfig.theme.textTheme.bodyMedium,
+              ),
+            ],
           ),
         ],
       ),

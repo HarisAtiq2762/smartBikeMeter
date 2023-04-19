@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:smart_bike_meter/pages/auth/login.dart';
 import '../configs/screen_size_config.dart';
 import '../widgets/dashboard_data_container.dart';
 import '../widgets/dashboard_date_container.dart';
@@ -39,7 +40,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 value.latitude,
                 value.longitude,
               ),
-              zoom: 20.0,
+              zoom: 17.0,
             ),
           ),
         );
@@ -66,7 +67,7 @@ class _DashboardPageState extends State<DashboardPage> {
               lat,
               long,
             ),
-            zoom: 20.0,
+            zoom: 17.0,
           ),
         ),
       );
@@ -81,148 +82,192 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    Widget displayMap() => Container(
+          height: ScreenConfig.screenSizeHeight * 0.38,
+          width: ScreenConfig.screenSizeWidth,
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(30.0),
+            ),
+            border: Border.all(
+              color: ScreenConfig.theme.primaryColor,
+              width: 2.0,
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(30.0)),
+            child: GoogleMap(
+              myLocationEnabled: true,
+              scrollGesturesEnabled: true,
+              zoomControlsEnabled: true,
+              myLocationButtonEnabled: false,
+              compassEnabled: true,
+              mapToolbarEnabled: false,
+              trafficEnabled: true,
+              buildingsEnabled: true,
+              indoorViewEnabled: true,
+              rotateGesturesEnabled: true,
+              tiltGesturesEnabled: true,
+              zoomGesturesEnabled: true,
+              mapType: MapType.normal,
+              initialCameraPosition: CameraPosition(
+                target: LatLng(lat, long),
+                zoom: 17.0,
+              ),
+              onMapCreated: (GoogleMapController controller) {
+                mapController = controller;
+                Completer().complete(controller);
+              },
+            ),
+          ),
+        );
+
+    Widget displaySpeedometer() => SizedBox(
+          height: ScreenConfig.screenSizeHeight * 0.34,
+          child: SfRadialGauge(
+            backgroundColor: Colors.black,
+            animationDuration: 3000,
+            enableLoadingAnimation: true,
+            axes: <RadialAxis>[
+              RadialAxis(
+                useRangeColorForAxis: true,
+                canScaleToFit: true,
+                showLastLabel: true,
+                showTicks: true,
+                tickOffset: 5,
+                minimum: 0,
+                maximum: 250,
+                minorTicksPerInterval: 5,
+                axisLineStyle: const AxisLineStyle(
+                  color: Colors.white,
+                  thickness: 0,
+                ),
+                axisLabelStyle: const GaugeTextStyle(
+                  color: Colors.white,
+                ),
+                majorTickStyle: const MajorTickStyle(
+                  color: Colors.white,
+                  length: 12,
+                ),
+                minorTickStyle: const MinorTickStyle(
+                  color: Colors.white,
+                  length: 10,
+                ),
+                ranges: <GaugeRange>[
+                  GaugeRange(startValue: 0, endValue: 50, color: Colors.green),
+                  GaugeRange(
+                      startValue: 50, endValue: 150, color: Colors.orange),
+                  GaugeRange(startValue: 150, endValue: 250, color: Colors.red)
+                ],
+                pointers: <GaugePointer>[
+                  NeedlePointer(
+                    value: speed,
+                    enableAnimation: true,
+                    needleColor: Colors.red,
+                    knobStyle: const KnobStyle(
+                      knobRadius: 0.1,
+                      color: Colors.red,
+                    ),
+                  )
+                ],
+                annotations: <GaugeAnnotation>[
+                  GaugeAnnotation(
+                    widget: Text(
+                      speed.toStringAsFixed(2),
+                      style: const TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    angle: 90,
+                    positionFactor: 0.5,
+                  )
+                ],
+              )
+            ],
+          ),
+        );
+
     return Scaffold(
+      backgroundColor: Colors.black,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          getPosition();
+        },
+        child: const Icon(Icons.location_on_outlined),
+      ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: ScreenConfig.screenSizeHeight * 0.4,
-                    child: SfRadialGauge(
-                      backgroundColor: Colors.black,
-                      animationDuration: 3000,
-                      enableLoadingAnimation: true,
-                      axes: <RadialAxis>[
-                        RadialAxis(
-                          useRangeColorForAxis: true,
-                          canScaleToFit: true,
-                          showLastLabel: true,
-                          showTicks: true,
-                          tickOffset: 5,
-                          minimum: 0,
-                          maximum: 250,
-                          minorTicksPerInterval: 5,
-                          axisLineStyle: const AxisLineStyle(
-                            color: Colors.white,
-                            thickness: 0,
-                          ),
-                          axisLabelStyle: const GaugeTextStyle(
-                            color: Colors.white,
-                          ),
-                          majorTickStyle: const MajorTickStyle(
-                            color: Colors.white,
-                            length: 12,
-                          ),
-                          minorTickStyle: const MinorTickStyle(
-                            color: Colors.white,
-                            length: 10,
-                          ),
-                          ranges: <GaugeRange>[
-                            GaugeRange(
-                                startValue: 0,
-                                endValue: 50,
-                                color: Colors.green),
-                            GaugeRange(
-                                startValue: 50,
-                                endValue: 150,
-                                color: Colors.orange),
-                            GaugeRange(
-                                startValue: 150,
-                                endValue: 250,
-                                color: Colors.red)
+        child: SizedBox(
+          height: ScreenConfig.screenSizeHeight,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(height: ScreenConfig.screenSizeHeight * 0.04),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Welcome,',
+                              style: ScreenConfig.theme.textTheme.bodyMedium,
+                            ),
+                            Text(
+                              'Noman',
+                              style: ScreenConfig.theme.textTheme.bodyLarge,
+                            ),
                           ],
-                          pointers: <GaugePointer>[
-                            NeedlePointer(
-                              value: speed,
-                              enableAnimation: true,
-                              needleColor: Colors.red,
-                              knobStyle: const KnobStyle(
-                                knobRadius: 0.1,
-                                color: Colors.red,
-                              ),
-                            )
-                          ],
-                          annotations: <GaugeAnnotation>[
-                            GaugeAnnotation(
-                              widget: Text(
-                                speed.toStringAsFixed(2),
-                                style: const TextStyle(
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              angle: 90,
-                              positionFactor: 0.5,
-                            )
-                          ],
-                        )
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(
+                                context, LoginScreen.routeName);
+                          },
+                          icon: Icon(
+                            Icons.power_settings_new,
+                            color: ScreenConfig.theme.primaryColor,
+                            size: 34.0,
+                          ),
+                        ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 22),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: const [
-                      DashboardDateContainer(
-                        format: 'dd-MMM-yyyy',
-                        title: 'Date',
-                      ),
-                      SizedBox(height: 10),
-                      DashboardDateContainer(
-                        format: 'hh:mm:ss aaa',
-                        title: 'Time',
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 22),
-                  const DashboardDataContainer(
-                    text: '60 %',
-                    title: 'Fuel',
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-            SizedBox(
-              height: ScreenConfig.screenSizeHeight * 0.4,
-              width: ScreenConfig.screenSizeWidth,
-              child: GoogleMap(
-                myLocationEnabled: true,
-                scrollGesturesEnabled: true,
-                zoomControlsEnabled: false,
-                myLocationButtonEnabled: false,
-                compassEnabled: false,
-                mapToolbarEnabled: false,
-                trafficEnabled: true,
-                buildingsEnabled: true,
-                indoorViewEnabled: true,
-                rotateGesturesEnabled: true,
-                tiltGesturesEnabled: true,
-                zoomGesturesEnabled: true,
-                // markers: <Marker>{
-                //   Marker(
-                //       markerId: const MarkerId('one'),
-                //       // icon: originIcon,
-                //       position: LatLng(lat, long),
-                //       infoWindow: const InfoWindow(title: 'Current location')),
-                // },
-                mapType: MapType.normal,
-                initialCameraPosition: CameraPosition(
-                  target: LatLng(lat, long),
-                  zoom: 20.0,
+                    displaySpeedometer(),
+                    const SizedBox(height: 22),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: const [
+                        DashboardDateContainer(
+                          format: 'dd-MMM-yyyy',
+                          title: 'Date',
+                        ),
+                        SizedBox(height: 10),
+                        DashboardDateContainer(
+                          format: 'hh:mm:ss aaa',
+                          title: 'Time',
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 22),
+                    const DashboardDataContainer(
+                      text: '60 %',
+                      title: 'Fuel',
+                    ),
+                  ],
                 ),
-                onMapCreated: (GoogleMapController controller) {
-                  mapController = controller;
-                  Completer().complete(controller);
-                },
               ),
-            ),
-          ],
+              const SizedBox(height: 10),
+              displayMap(),
+            ],
+          ),
         ),
       ),
     );

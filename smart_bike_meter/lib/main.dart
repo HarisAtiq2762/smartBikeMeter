@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:smart_bike_meter/pages/home_screen.dart';
-
+import 'package:firebase_core/firebase_core.dart';
 import 'configs/routes.dart';
+import 'dart:io';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -16,6 +19,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter speedometer',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        primaryColor: Colors.blueGrey,
         textTheme: const TextTheme(
           bodyMedium: TextStyle(color: Colors.white),
           bodyLarge: TextStyle(color: Colors.white, fontSize: 30),
@@ -38,5 +42,14 @@ class MyApp extends StatelessWidget {
       ),
       home: const HomePage(),
     );
+  }
+}
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }

@@ -47,16 +47,32 @@ class _DashboardDateContainerState extends State<DashboardDateContainer> {
         border: Border.all(color: Colors.blueGrey),
         borderRadius: BorderRadius.circular(10.0),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            widget.title,
-            style: ScreenConfig.theme.textTheme.bodyMedium,
-          ),
-          Text(
-            DateFormat(widget.format).format(time),
-            style: ScreenConfig.theme.textTheme.bodyMedium,
+          widget.title == 'Date'
+              ? Icon(
+                  Icons.calendar_month_outlined,
+                  color: ScreenConfig.theme.primaryColor,
+                )
+              : Icon(
+                  Icons.watch_later_outlined,
+                  color: ScreenConfig.theme.primaryColor,
+                ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.title,
+                style: ScreenConfig.theme.textTheme.bodyMedium,
+              ),
+              Text(
+                DateFormat(widget.format).format(time),
+                style: ScreenConfig.theme.textTheme.bodyMedium,
+              ),
+            ],
           ),
         ],
       ),
